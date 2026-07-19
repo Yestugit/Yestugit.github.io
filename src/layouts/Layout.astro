@@ -1,6 +1,8 @@
 ---
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import { siteConfig } from "@/config";
+import siteBackground from "../assets/images/site-background.jpg";
+import { getImage } from "astro:assets";
 import {
 	AUTO_MODE,
 	BANNER_HEIGHT,
@@ -34,6 +36,12 @@ const isHomePage = pathsEqual(Astro.url.pathname, url("/"));
 // defines global css variables
 // why doing this in Layout instead of GlobalStyles: https://github.com/withastro/astro/issues/6728#issuecomment-1502203757
 const configHue = siteConfig.themeColor.hue;
+const optimizedSiteBackground = await getImage({
+	src: siteBackground,
+	width: 2560,
+	format: "webp",
+	quality: 100,
+});
 if (!banner || typeof banner !== "string" || banner.trim() === "") {
 	banner = siteConfig.banner.src;
 }
@@ -157,6 +165,7 @@ const bannerOffset =
 	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  data-overlayscrollbars-initialize
 	>
+		<div id="site-background" aria-hidden="true"></div>
 		<ConfigCarrier></ConfigCarrier>
 		<slot />
 
@@ -169,7 +178,32 @@ const bannerOffset =
 	bannerOffset,
 	'banner-height-home': `${BANNER_HEIGHT_HOME}vh`,
 	'banner-height': `${BANNER_HEIGHT}vh`,
+	'site-background-image': `url("${optimizedSiteBackground.src}")`,
 }}>
+body {
+	position: relative;
+	isolation: isolate;
+	background: transparent;
+}
+
+#site-background {
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background-image:
+		linear-gradient(rgb(247 246 251 / 0.38), rgb(240 244 252 / 0.44)),
+		var(--site-background-image);
+	background-position: center;
+	background-size: cover;
+}
+
+:root.dark #site-background {
+	background-image:
+		linear-gradient(rgb(18 17 28 / 0.52), rgb(20 24 35 / 0.58)),
+		var(--site-background-image);
+}
+
 @tailwind components;
 @layer components {
 	.enable-banner.is-home #banner-wrapper {

@@ -1,3 +1,13 @@
+import { siteConfig } from "../config";
+
 export function formatDateToYYYYMMDD(date: Date): string {
-	return date.toISOString().substring(0, 10);
+	const parts = new Intl.DateTimeFormat("zh-CN", {
+		timeZone: siteConfig.timeZone,
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	}).formatToParts(date);
+	const value = (type: Intl.DateTimeFormatPartTypes) =>
+		parts.find((part) => part.type === type)?.value ?? "";
+	return `${value("year")}-${value("month")}-${value("day")}`;
 }

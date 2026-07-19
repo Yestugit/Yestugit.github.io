@@ -1,0 +1,12 @@
+---
+import SectionOverview from "@components/SectionOverview.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getSectionOverview } from "@utils/content-utils";
+
+const description = "记录阅读、游戏、日常经历和偶尔出现的想法。";
+const overview = await getSectionOverview("life");
+---
+
+<MainGridLayout title="生活随想" description={description}>
+	<SectionOverview title="生活随想" description={description} {...overview} />
+</MainGridLayout>

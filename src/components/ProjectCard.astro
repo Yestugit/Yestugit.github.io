@@ -1,0 +1,77 @@
+---
+import { Icon } from "astro-icon/components";
+import type { Project } from "../data/projects";
+import ImageWrapper from "./misc/ImageWrapper.astro";
+
+interface Props {
+	project: Project;
+}
+
+const { project } = Astro.props;
+const hasRepository = project.repository.trim().length > 0;
+const hasDemo = project.demo.trim().length > 0;
+const hasImage = project.image.trim().length > 0;
+---
+
+<article class="card-base project-card flex h-full flex-col">
+	{hasImage ? (
+		<ImageWrapper src={project.image} alt={`${project.name} 项目封面`} class="aspect-[16/9] w-full" />
+	) : (
+		<div class="project-placeholder aspect-[16/9]" aria-label={`${project.name} 暂无项目封面`}>
+			<Icon name="material-symbols:book-4-spark-outline-rounded" class="text-5xl text-[var(--primary)]" />
+			<span class="text-sm font-semibold tracking-[0.14em] text-50">PROJECT NOTE</span>
+		</div>
+	)}
+
+	<div class="flex flex-1 flex-col px-5 py-5 md:px-6">
+		<div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+			<h2 class="break-words text-xl font-bold text-90">{project.name}</h2>
+			<div class="flex items-center gap-2">
+				{project.featured && <span class="project-badge">重点项目</span>}
+				<span class="project-status">{project.status}</span>
+			</div>
+		</div>
+
+		<p class="mb-5 leading-7 text-50">{project.description}</p>
+
+		<div class="mb-5 flex flex-wrap gap-2">
+			{project.technologies.map((technology) => <span class="tech-chip">{technology}</span>)}
+		</div>
+
+		<div class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-black/5 pt-4 dark:border-white/10">
+			<span class="text-sm text-50">时间：{project.date}</span>
+			<div class="flex flex-wrap gap-2">
+				{hasRepository && (
+					<a class="project-link" href={project.repository} target="_blank" rel="noopener noreferrer">
+						<Icon name="fa6-brands:github" />
+						代码仓库
+					</a>
+				)}
+				{hasDemo && (
+					<a class="project-link" href={project.demo} target="_blank" rel="noopener noreferrer">
+						<Icon name="fa6-solid:arrow-up-right-from-square" />
+						在线演示
+					</a>
+				)}
+			</div>
+		</div>
+	</div>
+</article>
+
+<style>
+	.project-card {
+		@apply transition-transform hover:-translate-y-0.5;
+	}
+	.project-placeholder {
+		@apply flex flex-col items-center justify-center gap-2 border-b border-black/5 bg-gradient-to-br from-[var(--btn-regular-bg)] to-[var(--page-bg)] dark:border-white/10;
+	}
+	.project-badge, .project-status, .tech-chip {
+		@apply rounded-lg bg-[var(--btn-regular-bg)] px-2.5 py-1 text-xs font-semibold text-black/50 dark:text-white/50;
+	}
+	.project-status {
+		@apply text-[var(--primary)];
+	}
+	.project-link {
+		@apply flex items-center gap-2 rounded-lg bg-[var(--btn-regular-bg)] px-3 py-2 text-sm font-semibold text-black/60 hover:bg-[var(--btn-regular-bg-hover)] hover:text-[var(--primary)] dark:text-white/60;
+	}
+</style>

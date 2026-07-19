@@ -51,3 +51,16 @@ html.is-animating .transition-swup-fade {
 #post-container :nth-child(5) { animation-delay: calc(var(--content-delay) + 250ms) }
 #post-container :nth-child(6) { animation-delay: calc(var(--content-delay) + 325ms) }
 
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after {
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+
+	.onload-animation {
+		opacity: 1;
+		transform: none;
+	}
+}

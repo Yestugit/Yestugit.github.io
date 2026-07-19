@@ -1,9 +1,45 @@
-# About
-This is the demo site for [Fuwari](https://github.com/saicaca/fuwari).
+# 关于
 
-::github{repo="saicaca/fuwari"}
+## 关于我
 
-> ### Sources of images used in this site
-> - [Unsplash](https://unsplash.com/)
-> - [星と少女](https://www.pixiv.net/artworks/108916539) by [Stella](https://www.pixiv.net/users/93273965)
-> - [Rabbit - v1.4 Showcase](https://civitai.com/posts/586908) by [Rabbit_YourMajesty](https://civitai.com/user/Rabbit_YourMajesty)
+你好，这里是<strong>橘の記録，</strong>欢迎来到我的赛博小窝。
+
+我本科毕业于华南理工大学软件学院，目前在浙江大学软件学院攻读硕士学位，是一名计算机与人工智能方向的学习者。这里不会被写成一份正式简历，我更希望它像一段持续更新的自我介绍：保留正在学习的过程，也允许兴趣和想法慢慢变化。
+
+## 目前在学习什么
+
+现在主要关注机器学习、深度学习、大语言模型、RAG、Web 开发和生成式人工智能。学习札记会从真实遇到的问题出发，记录课程笔记、论文阅读、项目实践、环境配置和技术踩坑，不会为了显得完整而编造尚未做过的成果。
+
+## 技术与工具
+
+目前接触和使用的技术、工具包括：
+
+- Python、PyTorch
+- Git、Linux
+- Vue、Spring Boot
+- MySQL
+- Astro
+
+这些名称只是当前工具箱的一部分。比起列出一长串关键词，我更在意以后能通过具体文章说明它们解决了什么问题。
+
+## 做过的项目
+
+目前正在整理的项目是 **VisualizingBook**，它是一个仍在开发中的可视化阅读与学习相关项目。项目页只展示已经确认的信息；技术栈、仓库和演示地址会在确定后再补充。
+
+## 为什么建立这个网站
+
+我想要一个可以长期积累、方便回看的个人空间。学习平台和社交媒体适合快速交流，但很多笔记、调试过程和生活片段更适合留在自己的站点里。
+
+因此，这里被分成“学习札记”和“生活随想”两个主要栏目：一边记录技术与项目，一边保存阅读、游戏、动漫、日常经历和偶尔出现的想法。希望它不是一次性完成的展示页，而是一座会随着时间生长的数字花园。
+
+## 兴趣与生活
+
+学习之外，我喜欢玩游戏，例如《赛博朋克 2077》《消逝的光芒》《生化危机》和《魔法少女的魔女审判》；也喜欢看动画，例如《罪恶王冠》《莉可丽丝》《中二病也要谈恋爱！》《我心里危险的东西》和《胆大党》。这些内容以后也可能出现在生活随想里。
+
+我很喜欢的一句话是：**Stay curious, stay moving.**
+
+## 联系方式
+
+- GitHub：[Yestugit](https://github.com/Yestugit)
+- 邮箱：[1735837808@qq.com](mailto:1735837808@qq.com)
+- Bilibili：[个人空间](https://space.bilibili.com/1868822677?spm_id_from=333.1387.0.0)

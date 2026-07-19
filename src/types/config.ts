@@ -3,6 +3,12 @@ import type { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
 export type SiteConfig = {
 	title: string;
 	subtitle: string;
+	description: string;
+	url: string;
+	author: string;
+	copyrightName: string;
+	timeZone: string;
+	socialImage?: string;
 
 	lang:
 		| "en"

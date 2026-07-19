@@ -1,4 +1,5 @@
 import { defineCollection, z } from "astro:content";
+import { POST_SECTIONS } from "../types/content";
 
 const postsCollection = defineCollection({
 	schema: z.object({
@@ -10,6 +11,7 @@ const postsCollection = defineCollection({
 		image: z.string().optional().default(""),
 		tags: z.array(z.string()).optional().default([]),
 		category: z.string().optional().nullable().default(""),
+		section: z.enum(POST_SECTIONS).optional(),
 		lang: z.string().optional().default(""),
 
 		/* For internal use */

@@ -1,0 +1,77 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDateToYYYYMMDD } from "@utils/date-utils";
+import { getCategoryUrl, getTagUrl } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
+import PostList from "./PostList.astro";
+
+interface Props {
+	title: string;
+	description: string;
+	posts: CollectionEntry<"posts">[];
+	categories: string[];
+	tags: string[];
+	latestUpdated?: Date;
+}
+
+const { title, description, posts, categories, tags, latestUpdated } =
+	Astro.props;
+---
+
+<section class="card-base mb-4 px-6 py-6 md:px-8 md:py-7 onload-animation" aria-labelledby="section-title">
+	<div class="flex flex-col gap-5">
+		<div>
+			<p class="mb-2 text-sm font-semibold tracking-[0.16em] text-[var(--primary)]">DIGITAL GARDEN</p>
+			<h1 id="section-title" class="text-3xl font-bold text-90">{title}</h1>
+			<p class="mt-3 leading-7 text-50">{description}</p>
+		</div>
+
+		<div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+			<div class="section-stat">
+				<Icon name="material-symbols:article-outline-rounded" class="text-xl text-[var(--primary)]" />
+				<div><span class="font-bold text-90">{posts.length}</span><span class="ml-1 text-sm text-50">篇文章</span></div>
+			</div>
+			<div class="section-stat">
+				<Icon name="material-symbols:folder-outline-rounded" class="text-xl text-[var(--primary)]" />
+				<div><span class="font-bold text-90">{categories.length}</span><span class="ml-1 text-sm text-50">个分类</span></div>
+			</div>
+			<div class="section-stat col-span-2 sm:col-span-1">
+				<Icon name="material-symbols:update-rounded" class="text-xl text-[var(--primary)]" />
+				<div class="text-sm text-50">{latestUpdated ? formatDateToYYYYMMDD(latestUpdated) : "暂无更新"}</div>
+			</div>
+		</div>
+
+		{categories.length > 0 && (
+			<div>
+				<h2 class="mb-2 text-sm font-semibold text-75">相关分类</h2>
+				<div class="flex flex-wrap gap-2">
+					{categories.map((category) => <a class="section-chip" href={getCategoryUrl(category)}>{category}</a>)}
+				</div>
+			</div>
+		)}
+
+		{tags.length > 0 && (
+			<div>
+				<h2 class="mb-2 text-sm font-semibold text-75">相关标签</h2>
+				<div class="flex flex-wrap gap-2">
+					{tags.map((tag) => <a class="section-chip" href={getTagUrl(tag)}>#{tag}</a>)}
+				</div>
+			</div>
+		)}
+	</div>
+</section>
+
+{posts.length > 0 ? (
+	<PostList posts={posts} />
+) : (
+	<div class="card-base px-6 py-12 text-center text-50">这里还没有文章，内容会慢慢长出来。</div>
+)}
+
+<style>
+	.section-stat {
+		@apply flex min-w-0 items-center gap-3 rounded-xl bg-[var(--btn-regular-bg)] px-4 py-3;
+	}
+	.section-chip {
+		@apply rounded-lg bg-[var(--btn-regular-bg)] px-3 py-1.5 text-sm font-medium text-black/50 hover:bg-[var(--btn-regular-bg-hover)] hover:text-[var(--primary)] dark:text-white/50;
+	}
+</style>

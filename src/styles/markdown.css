@@ -1,4 +1,7 @@
 .custom-md {
+	overflow-wrap: anywhere;
+	line-height: 1.8;
+
     h1 {
         @apply text-3xl;
     }
@@ -123,5 +126,22 @@
         overflow-x: auto;
         margin: 1em 0;
     }
+
+	table {
+		display: block;
+		max-width: 100%;
+		overflow-x: auto;
+		white-space: nowrap;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+	}
+
+	pre, .expressive-code {
+		max-width: 100%;
+		overflow-x: auto;
+	}
     
 }

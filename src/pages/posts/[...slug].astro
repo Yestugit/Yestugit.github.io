@@ -6,12 +6,12 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@utils/content-utils";
-import { getDir, getPostUrlBySlug } from "@utils/url-utils";
+import { getDir, getPostUrlBySlug, url } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
 import PostMetadata from "../../components/PostMeta.astro";
-import { profileConfig, siteConfig } from "../../config";
+import { siteConfig } from "../../config";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
 
 export async function getStaticPaths() {
@@ -27,6 +27,13 @@ const { Content, headings } = await entry.render();
 
 const { remarkPluginFrontmatter } = await entry.render();
 
+const sectionLink =
+	entry.data.section === "learning"
+		? { label: "返回学习札记", href: "/learning/" }
+		: entry.data.section === "life"
+			? { label: "返回生活随想", href: "/life/" }
+			: undefined;
+
 const jsonLd = {
 	"@context": "https://schema.org",
 	"@type": "BlogPosting",
@@ -35,7 +42,7 @@ const jsonLd = {
 	keywords: entry.data.tags,
 	author: {
 		"@type": "Person",
-		name: profileConfig.name,
+		name: siteConfig.author,
 		url: Astro.site,
 	},
 	datePublished: formatDateToYYYYMMDD(entry.data.published),
@@ -111,7 +118,14 @@ const jsonLd = {
         </div>
     </div>
 
-    <div class="flex flex-col md:flex-row justify-between mb-4 gap-4 overflow-hidden w-full">
+    {sectionLink && <a href={url(sectionLink.href)} class="block mb-4 w-full md:w-fit font-bold active:scale-95">
+        <div class="btn-card rounded-2xl h-[3.75rem] px-4 flex items-center !justify-start gap-3">
+            <Icon name="material-symbols:arrow-back-rounded" class="text-[1.75rem] text-[var(--primary)]" />
+            <span class="text-black/75 dark:text-white/75">{sectionLink.label}</span>
+        </div>
+    </a>}
+
+    {(entry.data.nextSlug || entry.data.prevSlug) && <div class="flex flex-col md:flex-row justify-between mb-4 gap-4 overflow-hidden w-full">
         <a href={entry.data.nextSlug ? getPostUrlBySlug(entry.data.nextSlug) : "#"}
            class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.nextSlug}]}>
             {entry.data.nextSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-start gap-4" >
@@ -131,6 +145,6 @@ const jsonLd = {
                 <Icon name="material-symbols:chevron-right-rounded" class="text-[2rem] text-[var(--primary)]" />
             </div>}
         </a>
-    </div>
+    </div>}
 
 </MainGridLayout>

@@ -2,6 +2,7 @@ import { type CollectionEntry, getCollection } from "astro:content";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { getCategoryUrl } from "@utils/url-utils.ts";
+import type { PostSection } from "../types/content";
 
 // // Retrieve posts and sort them by publication date
 async function getRawSortedPosts() {
@@ -20,16 +21,71 @@ async function getRawSortedPosts() {
 export async function getSortedPosts() {
 	const sorted = await getRawSortedPosts();
 
-	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = sorted[i - 1].slug;
-		sorted[i].data.nextTitle = sorted[i - 1].data.title;
+	for (const post of sorted) {
+		post.data.nextSlug = "";
+		post.data.nextTitle = "";
+		post.data.prevSlug = "";
+		post.data.prevTitle = "";
 	}
-	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = sorted[i + 1].slug;
-		sorted[i].data.prevTitle = sorted[i + 1].data.title;
+
+	const postsBySection = new Map<string, CollectionEntry<"posts">[]>();
+	for (const post of sorted) {
+		const section = post.data.section ?? "unsectioned";
+		const sectionPosts = postsBySection.get(section) ?? [];
+		sectionPosts.push(post);
+		postsBySection.set(section, sectionPosts);
+	}
+
+	for (const sectionPosts of postsBySection.values()) {
+		for (let i = 1; i < sectionPosts.length; i++) {
+			sectionPosts[i].data.nextSlug = sectionPosts[i - 1].slug;
+			sectionPosts[i].data.nextTitle = sectionPosts[i - 1].data.title;
+		}
+		for (let i = 0; i < sectionPosts.length - 1; i++) {
+			sectionPosts[i].data.prevSlug = sectionPosts[i + 1].slug;
+			sectionPosts[i].data.prevTitle = sectionPosts[i + 1].data.title;
+		}
 	}
 
 	return sorted;
+}
+
+export async function getPostsBySection(section: PostSection) {
+	const sorted = await getSortedPosts();
+	return sorted.filter((post) => post.data.section === section);
+}
+
+export type SectionOverview = {
+	posts: CollectionEntry<"posts">[];
+	categories: string[];
+	tags: string[];
+	latestUpdated?: Date;
+};
+
+export async function getSectionOverview(
+	section: PostSection,
+): Promise<SectionOverview> {
+	const posts = await getPostsBySection(section);
+	const categories = [
+		...new Set(
+			posts
+				.map((post) => post.data.category?.trim())
+				.filter((category): category is string => Boolean(category)),
+		),
+	].sort((a, b) => a.localeCompare(b, "zh-CN"));
+	const tags = [
+		...new Set(
+			posts.flatMap((post) => post.data.tags.map((tag) => tag.trim())),
+		),
+	]
+		.filter(Boolean)
+		.sort((a, b) => a.localeCompare(b, "zh-CN"));
+	const latestUpdated = posts.reduce<Date | undefined>((latest, post) => {
+		const postDate = post.data.updated ?? post.data.published;
+		return !latest || postDate > latest ? postDate : latest;
+	}, undefined);
+
+	return { posts, categories, tags, latestUpdated };
 }
 export type PostForList = {
 	slug: string;

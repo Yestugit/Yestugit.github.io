@@ -2,7 +2,11 @@
 
 @layer components {
     .card-base {
-        @apply rounded-[var(--radius-large)] overflow-hidden bg-[var(--card-bg)] transition;
+		@apply rounded-[var(--radius-large)] overflow-hidden border border-black/[0.035] bg-[var(--card-bg)] transition dark:border-white/[0.07];
+		box-shadow: 0 0.35rem 1.5rem rgb(70 64 120 / 0.055);
+	}
+	:root.dark .card-base {
+		box-shadow: 0 0.45rem 1.75rem rgb(0 0 0 / 0.16);
     }
     h1, h2, h3, h4, h5, h6, p, a, span, li, ul, ol, blockquote, code, pre, table, th, td, strong {
         @apply transition;
@@ -45,7 +49,7 @@
         }
         &.scale-animation {
             @apply expand-animation;
-            &.current-theme-btn {
+            &.current-theme-btn, &.current-page {
                 @apply before:scale-100 before:opacity-100 before:bg-[var(--btn-plain-bg-hover)] text-[var(--primary)]
             }
         }

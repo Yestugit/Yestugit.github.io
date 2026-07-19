@@ -1,6 +1,6 @@
 <script lang="ts">
 import { onMount } from "svelte";
-
+import { siteConfig } from "../config";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import type { PostForList } from "../utils/content-utils";
@@ -26,10 +26,6 @@ function formatDate(date: Date) {
 	const month = (date.getMonth() + 1).toString().padStart(2, "0");
 	const day = date.getDate().toString().padStart(2, "0");
 	return `${month}-${day}`;
-}
-
-function formatTag(tagList: string[]) {
-	return tagList.map((t) => `#${t}`).join(" ");
 }
 
 onMount(async () => {
@@ -73,6 +69,11 @@ onMount(async () => {
 	groupedPostsArray.sort((a, b) => b.year - a.year);
 
 	groups = groupedPostsArray;
+
+	const filterName = categories[0] ?? tags[0];
+	if (filterName) {
+		document.title = `${filterName} | ${siteConfig.title}`;
+	}
 });
 </script>
 
@@ -127,12 +128,12 @@ onMount(async () => {
                             {post.data.title}
                         </div>
 
-                        <!-- tag list -->
+                        <!-- category -->
                         <div
                                 class="hidden md:block md:w-[15%] text-left text-sm transition
                      whitespace-nowrap overflow-ellipsis overflow-hidden text-30"
                         >
-                            {formatTag(post.data.tags)}
+							{post.data.category || i18n(I18nKey.uncategorized)}
                         </div>
                     </div>
                 </a>

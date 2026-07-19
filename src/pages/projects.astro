@@ -1,0 +1,22 @@
+---
+import ProjectCard from "@components/ProjectCard.astro";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { projects } from "../data/projects";
+
+const description = "记录正在开发、持续维护和计划完善的个人项目。";
+const sortedProjects = [...projects].sort(
+	(a, b) => Number(b.featured) - Number(a.featured),
+);
+---
+
+<MainGridLayout title="项目" description={description}>
+	<section class="card-base mb-4 px-6 py-6 md:px-8 md:py-7 onload-animation">
+		<p class="mb-2 text-sm font-semibold tracking-[0.16em] text-[var(--primary)]">PROJECTS</p>
+		<h1 class="text-3xl font-bold text-90">项目</h1>
+		<p class="mt-3 max-w-2xl leading-7 text-50">{description} 项目信息会随着实际进展逐步补充，不为尚未确认的内容添加虚构链接或技术细节。</p>
+	</section>
+
+	<div class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
+		{sortedProjects.map((project) => <ProjectCard project={project} />)}
+	</div>
+</MainGridLayout>

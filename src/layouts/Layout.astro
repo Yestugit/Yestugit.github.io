@@ -1,6 +1,7 @@
 ---
 import { getImage } from "astro:assets";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
+import MusicPlayer from "@components/MusicPlayer.svelte";
 import { siteConfig } from "@/config";
 import siteBackground from "../assets/images/site-background.jpg";
 import {
@@ -168,6 +169,7 @@ const bannerOffset =
 		<div id="site-background" aria-hidden="true"></div>
 		<ConfigCarrier></ConfigCarrier>
 		<slot />
+		<MusicPlayer client:load />
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>

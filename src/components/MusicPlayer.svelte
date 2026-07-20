@@ -31,6 +31,7 @@ let player: HTMLElement;
 let currentTrack = 0;
 let isPlaying = false;
 let isExpanded = false;
+let isCollapsed = false;
 let currentTime = 0;
 let duration = 0;
 let volume = 0.7;
@@ -138,6 +139,19 @@ async function toggleExpanded() {
 	}, 300);
 }
 
+async function toggleCollapsed() {
+	isCollapsed = !isCollapsed;
+	isExpanded = false;
+	await tick();
+	if (!hasCustomPosition) return;
+	requestAnimationFrame(() => {
+		const nextPosition = clampPosition(positionX, positionY);
+		positionX = nextPosition.x;
+		positionY = nextPosition.y;
+		storePosition();
+	});
+}
+
 function seek(event: Event) {
 	const target = event.currentTarget as HTMLInputElement;
 	const nextTime = Number(target.value);
@@ -233,6 +247,7 @@ function finishDragging(event: PointerEvent) {
 
 <aside
 	bind:this={player}
+	class:collapsed={isCollapsed}
 	class:expanded={isExpanded}
 	class:dragging={isDragging}
 	class="music-player"
@@ -258,6 +273,17 @@ function finishDragging(event: PointerEvent) {
 		onerror={() => (playbackError = "这首歌暂时无法播放")}
 	></audio>
 
+	{#if isCollapsed}
+		<button
+			class="collapsed-toggle"
+			type="button"
+			onclick={toggleCollapsed}
+			aria-label="Expand music player"
+			title="Expand music player"
+		>
+			<Icon icon={isPlaying ? "material-symbols:graphic-eq-rounded" : "material-symbols:music-note-rounded"} />
+		</button>
+	{:else}
 	<div class="aurora" aria-hidden="true"></div>
 	<div class="drag-handle" aria-hidden="true">
 		<span></span><span></span><span></span><span></span><span></span>
@@ -314,6 +340,9 @@ function finishDragging(event: PointerEvent) {
 			<Icon icon="material-symbols:skip-next-rounded" />
 		</button>
 		<div class="deck-divider"></div>
+		<button type="button" onclick={toggleCollapsed} aria-label="Collapse music player" title="Collapse music player">
+			<Icon icon="material-symbols:keyboard-arrow-down-rounded" />
+		</button>
 		<button class="list-button" class:active={isExpanded} type="button" onclick={toggleExpanded} aria-label={isExpanded ? "收起播放列表" : "展开播放列表"} aria-expanded={isExpanded}>
 			<Icon icon="material-symbols:queue-music-rounded" />
 		</button>
@@ -353,6 +382,7 @@ function finishDragging(event: PointerEvent) {
 		</div>
 		{#if playbackError}<p class="error" role="status">{playbackError}</p>{/if}
 	</div>
+	{/if}
 </aside>
 
 <style>
@@ -395,6 +425,32 @@ function finishDragging(event: PointerEvent) {
 			0 2rem 5rem rgb(47 35 91 / 0.3),
 			0 0 0 3px oklch(0.72 0.16 var(--hue) / 0.2);
 	}
+
+	.music-player.collapsed {
+		width: 3.4rem;
+		height: 3.4rem;
+		padding: 0.3rem;
+		border-radius: 50%;
+		cursor: default;
+	}
+
+	.collapsed-toggle {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		height: 100%;
+		border: 0;
+		border-radius: inherit;
+		color: white;
+		background: linear-gradient(145deg, oklch(0.73 0.18 var(--hue)), oklch(0.56 0.21 var(--hue)));
+		box-shadow: 0 0.45rem 1.15rem oklch(0.52 0.16 var(--hue) / 0.36);
+		cursor: pointer;
+		transition: transform 150ms ease, filter 150ms ease;
+	}
+
+	.collapsed-toggle:hover { filter: brightness(1.08); }
+	.collapsed-toggle:active { transform: scale(0.9); }
+	.collapsed-toggle :global(svg) { font-size: 1.45rem; }
 
 	:global(:root.dark) .music-player {
 		border-color: rgb(255 255 255 / 0.1);

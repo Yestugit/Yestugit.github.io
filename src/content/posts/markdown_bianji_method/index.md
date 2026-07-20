@@ -1,5 +1,5 @@
 ---
-title: "markdowen 格式编辑办法"
+title: "markdown 格式编辑办法"
 published: 2026-07-20
 description: "在编辑我的学习笔记时发现不能直接复制AI的输出，公式会出错"
 image: ""

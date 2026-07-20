@@ -70,7 +70,7 @@ export const navBarConfig: NavBarConfig = {
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/G_wG5MgaYAAOwSt.jpg", // Relative to the /src directory. Relative to the /public directory if it starts with '/'
 	name: "橘の記録",
-	bio: "本科毕业于华南理工大学软件学院，目前在浙江大学软件学院攻读硕士学位，是计算机与人工智能方向的学习者。喜欢玩游戏，赛博朋克2077，消光，生化危机，魔裁（主推橘远，艾玛和希罗）等等。喜欢追番，罪恶王冠，莉可莉丝，中二病，我心危，胆大党等等。个人名言：Stay curious, stay moving.",
+	bio: "Hello,我是橘の記録，目前在浙江大学软件学院攻读硕士学位，是计算机与人工智能方向的学习者。喜欢玩游戏，赛博朋克2077，消光，生化危机，魔裁（主推橘远，艾玛和希罗）等等。喜欢追番，罪恶王冠，莉可莉丝，中二病，我心危，胆大党等等。个人名言：Stay curious, stay moving.",
 	links: [
 		{
 			name: "GitHub",

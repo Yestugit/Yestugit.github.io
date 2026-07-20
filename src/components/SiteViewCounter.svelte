@@ -10,22 +10,49 @@ import { onMount } from "svelte";
 type StatsResponse = { likes: number; views: number };
 type ViewResponse = { views: number; counted: boolean };
 
-let { increment = false }: { increment?: boolean } = $props();
-
 const SESSION_ID_KEY = "yestugit-home-session-id";
 const SESSION_COUNTED_KEY = "yestugit-home-session-counted";
 
 let views: number | null = null;
 let unavailable = false;
+let requestPending = false;
 
 onMount(() => {
+	const refresh = () => void loadViews();
+	const refreshWhenVisible = () => {
+		if (document.visibilityState === "visible") refresh();
+	};
+
+	window.addEventListener("focus", refresh);
+	document.addEventListener("visibilitychange", refreshWhenVisible);
+	document.addEventListener("swup:page:view", refresh);
 	void loadViews();
+
+	return () => {
+		window.removeEventListener("focus", refresh);
+		document.removeEventListener("visibilitychange", refreshWhenVisible);
+		document.removeEventListener("swup:page:view", refresh);
+	};
 });
 
+function isHomePage(): boolean {
+	const normalize = (path: string) =>
+		path.replace(/^\/+|\/+$/g, "").toLowerCase();
+	const homePath = new URL(import.meta.env.BASE_URL, window.location.origin)
+		.pathname;
+	return normalize(window.location.pathname) === normalize(homePath);
+}
+
 async function loadViews() {
+	if (requestPending) return;
+	requestPending = true;
+
 	for (let attempt = 0; attempt < 2; attempt++) {
 		try {
-			if (increment && sessionStorage.getItem(SESSION_COUNTED_KEY) !== "true") {
+			if (
+				isHomePage() &&
+				sessionStorage.getItem(SESSION_COUNTED_KEY) !== "true"
+			) {
 				const sessionId = getAnonymousId(sessionStorage, SESSION_ID_KEY);
 				const result = await requestSiteMetrics<ViewResponse>("/api/view", {
 					method: "POST",
@@ -38,6 +65,7 @@ async function loadViews() {
 				views = result.views;
 			}
 			unavailable = false;
+			requestPending = false;
 			return;
 		} catch {
 			if (attempt === 0)
@@ -45,6 +73,7 @@ async function loadViews() {
 		}
 	}
 	unavailable = true;
+	requestPending = false;
 }
 </script>
 

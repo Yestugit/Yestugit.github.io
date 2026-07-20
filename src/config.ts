@@ -52,6 +52,10 @@ export const siteConfig: SiteConfig = {
 	],
 };
 
+export const siteMetricsConfig = {
+	apiBaseUrl: "https://yestugit-site-metrics.saeye75.workers.dev",
+};
+
 export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,

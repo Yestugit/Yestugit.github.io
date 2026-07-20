@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS site_likes (
+	visitor_hash TEXT PRIMARY KEY,
+	created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS page_view_sessions (
+	session_hash TEXT PRIMARY KEY,
+	created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

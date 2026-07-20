@@ -1,0 +1,13 @@
+{
+	"$schema": "../node_modules/wrangler/config-schema.json",
+	"name": "yestugit-site-metrics",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-07-20",
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "yestugit-site-metrics",
+			"database_id": "0f2cb10a-4fdb-412b-bcd6-63433113003a"
+		}
+	]
+}

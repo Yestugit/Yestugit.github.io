@@ -7,6 +7,10 @@
     "start": "astro dev",
     "check": "astro check",
     "build": "astro build && pagefind --site dist",
+    "counter:dev": "wrangler dev --config counter-worker/wrangler.jsonc",
+    "counter:migrate:local": "wrangler d1 migrations apply DB --local --config counter-worker/wrangler.jsonc",
+    "counter:migrate": "wrangler d1 migrations apply DB --remote --config counter-worker/wrangler.jsonc",
+    "counter:deploy": "wrangler deploy --config counter-worker/wrangler.jsonc",
     "preview": "astro preview",
     "astro": "astro",
     "type-check": "tsc --noEmit --isolatedDeclarations",
@@ -70,7 +74,8 @@
     "@types/mdast": "^4.0.4",
     "@types/sanitize-html": "^2.16.0",
     "postcss-import": "^16.1.1",
-    "postcss-nesting": "^13.0.2"
+    "postcss-nesting": "^13.0.2",
+    "wrangler": "^4.112.0"
   },
   "packageManager": "pnpm@9.14.4"
 }

@@ -10,8 +10,8 @@ import { onMount } from "svelte";
 type StatsResponse = { likes: number; views: number };
 type ViewResponse = { views: number; counted: boolean };
 
-const SESSION_ID_KEY = "yestugit-home-session-id";
-const SESSION_COUNTED_KEY = "yestugit-home-session-counted";
+const VISITOR_ID_KEY = "yestugit-site-visitor-id";
+const VISITOR_COUNTED_KEY = "yestugit-site-visitor-counted";
 
 let views: number | null = null;
 let unavailable = false;
@@ -51,15 +51,15 @@ async function loadViews() {
 		try {
 			if (
 				isHomePage() &&
-				sessionStorage.getItem(SESSION_COUNTED_KEY) !== "true"
+				localStorage.getItem(VISITOR_COUNTED_KEY) !== "true"
 			) {
-				const sessionId = getAnonymousId(sessionStorage, SESSION_ID_KEY);
+				const visitorId = getAnonymousId(localStorage, VISITOR_ID_KEY);
 				const result = await requestSiteMetrics<ViewResponse>("/api/view", {
 					method: "POST",
-					body: JSON.stringify({ sessionId }),
+					body: JSON.stringify({ visitorId }),
 				});
 				views = result.views;
-				sessionStorage.setItem(SESSION_COUNTED_KEY, "true");
+				localStorage.setItem(VISITOR_COUNTED_KEY, "true");
 			} else {
 				const result = await requestSiteMetrics<StatsResponse>("/api/stats");
 				views = result.views;

@@ -6,6 +6,7 @@ interface D1Result<T = unknown> {
 interface D1PreparedStatement {
 	bind(...values: unknown[]): D1PreparedStatement;
 	first<T = Record<string, unknown>>(): Promise<T | null>;
+	all<T = Record<string, unknown>>(): Promise<D1Result<T>>;
 	run<T = unknown>(): Promise<D1Result<T>>;
 }
 
@@ -15,6 +16,7 @@ interface D1Database {
 
 interface Env {
 	DB: D1Database;
+	RATE_LIMIT_SALT?: string;
 }
 
 type JsonRecord = Record<string, unknown>;
@@ -23,12 +25,13 @@ const PRODUCTION_ORIGIN = "https://yestugit.github.io";
 const UUID_PATTERN =
 	/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const MAX_BODY_LENGTH = 1024;
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const RATE_LIMITS = { like: 12, view: 24 } as const;
 
 function isAllowedOrigin(origin: string | null): boolean {
-	if (!origin) return true;
 	return (
 		origin === PRODUCTION_ORIGIN ||
-		/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)
+		Boolean(origin && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin))
 	);
 }
 
@@ -77,7 +80,7 @@ async function parseJsonBody(request: Request): Promise<JsonRecord> {
 	return value as JsonRecord;
 }
 
-function readUuid(body: JsonRecord, key: "visitorId" | "sessionId"): string {
+function readUuid(body: JsonRecord, key: "visitorId"): string {
 	const value = body[key];
 	if (typeof value !== "string" || !UUID_PATTERN.test(value))
 		throw new Error(`Invalid ${key}`);
@@ -97,18 +100,37 @@ async function hashId(value: string): Promise<string> {
 async function getCounts(
 	db: D1Database,
 ): Promise<{ likes: number; views: number }> {
-	const [likeRow, viewRow] = await Promise.all([
-		db
-			.prepare("SELECT COUNT(*) AS count FROM site_likes")
-			.first<{ count: number }>(),
-		db
-			.prepare("SELECT COUNT(*) AS count FROM page_view_sessions")
-			.first<{ count: number }>(),
-	]);
+	const result = await db
+		.prepare(
+			"SELECT metric, value FROM site_metric_totals WHERE metric IN ('likes', 'views')",
+		)
+		.all<{ metric: "likes" | "views"; value: number }>();
+	const totals = new Map(result.results.map((row) => [row.metric, row.value]));
 	return {
-		likes: Number(likeRow?.count ?? 0),
-		views: Number(viewRow?.count ?? 0),
+		likes: Number(totals.get("likes") ?? 0),
+		views: Number(totals.get("views") ?? 0),
 	};
+}
+
+async function enforceRateLimit(
+	request: Request,
+	env: Env,
+	action: keyof typeof RATE_LIMITS,
+) {
+	const ip = request.headers.get("CF-Connecting-IP");
+	if (!ip) return;
+
+	const fingerprint = await hashId(`${env.RATE_LIMIT_SALT ?? ""}:${ip}`);
+	const bucketStart = Math.floor(Date.now() / RATE_LIMIT_WINDOW_MS);
+	const result = await env.DB
+		.prepare(
+			"INSERT INTO site_metric_rate_limits (fingerprint, action, bucket_start, attempts) VALUES (?, ?, ?, 1) ON CONFLICT(fingerprint, action, bucket_start) DO UPDATE SET attempts = attempts + 1 WHERE attempts < ?",
+		)
+		.bind(fingerprint, action, bucketStart, RATE_LIMITS[action])
+		.run();
+
+	if (Number(result.meta.changes ?? 0) !== 1)
+		throw new Error("Too many requests");
 }
 
 async function handleRequest(request: Request, env: Env): Promise<Response> {
@@ -139,6 +161,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
 		}
 
 		if (url.pathname === "/api/like" && request.method === "PUT") {
+			await enforceRateLimit(request, env, "like");
 			const body = await parseJsonBody(request);
 			const visitorHash = await hashId(readUuid(body, "visitorId"));
 			if (typeof body.liked !== "boolean")
@@ -159,12 +182,13 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
 		}
 
 		if (url.pathname === "/api/view" && request.method === "POST") {
+			await enforceRateLimit(request, env, "view");
 			const body = await parseJsonBody(request);
-			const sessionHash = await hashId(readUuid(body, "sessionId"));
+			const visitorHash = await hashId(readUuid(body, "visitorId"));
 			const result = await env.DB.prepare(
-				"INSERT OR IGNORE INTO page_view_sessions (session_hash) VALUES (?)",
+				"INSERT OR IGNORE INTO site_visitors (visitor_hash) VALUES (?)",
 			)
-				.bind(sessionHash)
+				.bind(visitorHash)
 				.run();
 			const counts = await getCounts(env.DB);
 			return json(
@@ -179,11 +203,13 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
 		if (
 			error instanceof SyntaxError ||
 			(error instanceof Error &&
-				/Invalid|Content-Type|too large/.test(error.message))
+				/Invalid|Content-Type|too large|Too many requests/.test(error.message))
 		) {
 			return json(
 				{ error: error instanceof Error ? error.message : "Invalid request" },
-				400,
+				error instanceof Error && error.message === "Too many requests"
+					? 429
+					: 400,
 				origin,
 			);
 		}

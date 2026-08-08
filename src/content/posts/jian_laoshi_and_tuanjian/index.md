@@ -7,7 +7,7 @@ tags:
   - 研究生
   - 进组生活
   - 实验室团建
-category: "生活随笔"
+category: 生活记录
 section: life
 draft: false
 lang: zh_CN

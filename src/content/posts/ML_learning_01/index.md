@@ -4,7 +4,7 @@ published: 2026-07-20
 description: "通俗解释机器学习，阐释定义，梳理各个概念的联系与区别"
 image: ""
 tags: []
-category: ""
+category: 学习笔记
 section: learning
 draft: false
 lang: zh_CN

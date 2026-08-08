@@ -7,7 +7,7 @@ tags:
   - 研究生
   - 数字花园
   - 提前进组
-category: 随笔
+category: 生活记录
 section: life
 draft: false
 lang: zh_CN

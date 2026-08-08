@@ -7,7 +7,7 @@ tags:
   - 学习记录
   - 编程
   - 人工智能
-category: 学习札记
+category: 学习笔记
 section: learning
 draft: false
 lang: zh_CN

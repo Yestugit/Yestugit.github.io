@@ -7,7 +7,7 @@ tags:
   - 音乐
   - 工具
   - 随想
-category: "随想"
+category: 技术实践
 section: life
 draft: false
 lang: zh_CN

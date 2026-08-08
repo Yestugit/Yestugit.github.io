@@ -4,7 +4,7 @@ published: 2026-07-22
 description: "记录生活"
 image: ""
 tags: []
-category: "随笔"
+category: 生活记录
 section: life
 draft: false
 lang: zh_CN
@@ -33,4 +33,3 @@ lang: zh_CN
 
 和师兄打了一个小时的乒乓球，捡了半个小时的球，麻了，一身汗，去洗澡了，以后也要继续加油，希望有一天不用再重复干这么基础的活，
 甚至还干不好，争取当一个大一点的“agent”。
-

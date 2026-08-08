@@ -4,7 +4,7 @@ published: 2026-07-19
 description: ""
 image: ""
 tags: []
-category: ""
+category: 生活记录
 section: life
 draft: true
 lang: zh_CN
@@ -23,4 +23,3 @@ lang: zh_CN
 ## 总结
 
 在这里总结文章的主要内容。
-

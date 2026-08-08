@@ -7,7 +7,7 @@ tags:
   - Git
   - GitHub
   - 开发工具
-category: ""
+category: 技术实践
 section: learning
 draft: false
 lang: zh_CN

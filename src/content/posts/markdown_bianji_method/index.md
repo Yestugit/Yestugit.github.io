@@ -4,7 +4,7 @@ published: 2026-07-20
 description: "在编辑我的学习笔记时发现不能直接复制AI的输出，公式会出错"
 image: ""
 tags: []
-category: ""
+category: 技术实践
 section: learning
 draft: false
 lang: zh_CN

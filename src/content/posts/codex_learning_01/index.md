@@ -4,7 +4,7 @@ published: 2026-07-19
 description: "记录解决办法"
 image: ""
 tags: []
-category: 学习札记
+category: 技术实践
 section: learning
 draft: false
 lang: zh_CN

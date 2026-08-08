@@ -7,7 +7,7 @@ tags:
   - 网站建设
   - 数字花园
   - Astro
-category: 随笔
+category: 技术实践
 section: life
 draft: false
 lang: zh_CN

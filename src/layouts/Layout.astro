@@ -3,7 +3,14 @@ import { getImage } from "astro:assets";
 import ConfigCarrier from "@components/ConfigCarrier.astro";
 import MusicPlayer from "@components/MusicPlayer.svelte";
 import { siteConfig } from "@/config";
-import siteBackground from "../assets/images/site-background.jpg";
+import {
+	BACKGROUND_DESKTOP_MAX_WIDTH,
+	BACKGROUND_FADE_DURATION_MS,
+	BACKGROUND_MOBILE_MAX_WIDTH,
+	BACKGROUND_ROTATION_INTERVAL_MS,
+	BACKGROUND_WEBP_QUALITY,
+	SITE_BACKGROUNDS,
+} from "../data/site-backgrounds";
 import {
 	AUTO_MODE,
 	BANNER_HEIGHT,
@@ -37,12 +44,27 @@ const isHomePage = pathsEqual(Astro.url.pathname, url("/"));
 // defines global css variables
 // why doing this in Layout instead of GlobalStyles: https://github.com/withastro/astro/issues/6728#issuecomment-1502203757
 const configHue = siteConfig.themeColor.hue;
-const optimizedSiteBackground = await getImage({
-	src: siteBackground,
-	width: 2560,
-	format: "webp",
-	quality: 100,
-});
+const optimizedSiteBackgrounds = await Promise.all(
+	SITE_BACKGROUNDS.map(async (src) => {
+		const mobileWidth = Math.min(src.width, BACKGROUND_MOBILE_MAX_WIDTH);
+		const desktopWidth = Math.min(src.width, BACKGROUND_DESKTOP_MAX_WIDTH);
+		const [mobile, desktop] = await Promise.all([
+			getImage({
+				src,
+				width: mobileWidth,
+				format: "webp",
+				quality: BACKGROUND_WEBP_QUALITY,
+			}),
+			getImage({
+				src,
+				width: desktopWidth,
+				format: "webp",
+				quality: BACKGROUND_WEBP_QUALITY,
+			}),
+		]);
+		return { mobile: mobile.src, desktop: desktop.src };
+	}),
+);
 if (!banner || typeof banner !== "string" || banner.trim() === "") {
 	banner = siteConfig.banner.src;
 }
@@ -166,10 +188,137 @@ const bannerOffset =
 	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}
 		  data-overlayscrollbars-initialize
 	>
-		<div id="site-background" aria-hidden="true"></div>
+		<div id="site-background" aria-hidden="true">
+			<div class="site-background-layer"></div>
+			<div class="site-background-layer"></div>
+		</div>
+		<script is:inline define:vars={{optimizedSiteBackgrounds, BACKGROUND_ROTATION_INTERVAL_MS, BACKGROUND_FADE_DURATION_MS}}>
+			(() => {
+				if (window.__siteBackgroundRotatorInitialized) return;
+				window.__siteBackgroundRotatorInitialized = true;
+
+				const container = document.getElementById('site-background');
+				const layers = Array.from(container?.querySelectorAll('.site-background-layer') || []);
+				if (!container || layers.length !== 2 || optimizedSiteBackgrounds.length === 0) return;
+
+				const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+				const loadedImages = new Map();
+				let currentIndex = Math.floor(Math.random() * optimizedSiteBackgrounds.length);
+				let activeLayerIndex = 0;
+				let rotationTimer = 0;
+				let transitionCleanupTimer = 0;
+
+				const getSource = (index) => {
+					const background = optimizedSiteBackgrounds[index];
+					const requiredWidth = window.innerWidth * Math.min(window.devicePixelRatio || 1, 2);
+					return requiredWidth <= 1440 ? background.mobile : background.desktop;
+				};
+
+				const loadBackground = (index) => {
+					const src = getSource(index);
+					if (loadedImages.has(src)) return loadedImages.get(src);
+
+					const promise = new Promise((resolve, reject) => {
+						const image = new Image();
+						image.decoding = 'async';
+						image.onload = async () => {
+							try {
+								await image.decode?.();
+							} catch {
+								// The load event is sufficient when decode() is unavailable or rejects.
+							}
+							resolve(src);
+						};
+						image.onerror = () => reject(new Error(`Unable to load background: ${src}`));
+						image.src = src;
+					});
+					loadedImages.set(src, promise);
+					promise.catch(() => loadedImages.delete(src));
+					return promise;
+				};
+
+				const preloadNext = () => {
+					if (document.hidden || reducedMotion.matches) return;
+					const nextIndex = (currentIndex + 1) % optimizedSiteBackgrounds.length;
+					void loadBackground(nextIndex).catch(() => undefined);
+				};
+
+				const schedulePreload = () => {
+					if ('requestIdleCallback' in window) {
+						window.requestIdleCallback(preloadNext, { timeout: 5_000 });
+					} else {
+						window.setTimeout(preloadNext, 1_000);
+					}
+				};
+
+				const scheduleRotation = () => {
+					window.clearTimeout(rotationTimer);
+					if (document.hidden || reducedMotion.matches) return;
+					rotationTimer = window.setTimeout(rotate, BACKGROUND_ROTATION_INTERVAL_MS);
+				};
+
+				const showBackground = async (index, initial = false) => {
+					const src = await loadBackground(index);
+					const nextLayerIndex = initial ? activeLayerIndex : 1 - activeLayerIndex;
+					const nextLayer = layers[nextLayerIndex];
+					const previousLayer = layers[activeLayerIndex];
+					nextLayer.style.backgroundImage = `url("${src}")`;
+
+					requestAnimationFrame(() => {
+						requestAnimationFrame(() => {
+							nextLayer.classList.add('is-active');
+							if (!initial) previousLayer.classList.remove('is-active');
+						});
+					});
+
+					if (!initial) {
+						activeLayerIndex = nextLayerIndex;
+						window.clearTimeout(transitionCleanupTimer);
+						transitionCleanupTimer = window.setTimeout(() => {
+							previousLayer.style.backgroundImage = 'none';
+						}, BACKGROUND_FADE_DURATION_MS + 100);
+					}
+					currentIndex = index;
+				};
+
+				async function rotate() {
+					for (let offset = 1; offset < optimizedSiteBackgrounds.length; offset += 1) {
+						const candidateIndex = (currentIndex + offset) % optimizedSiteBackgrounds.length;
+						try {
+							await showBackground(candidateIndex);
+							schedulePreload();
+							break;
+						} catch {
+							// Skip an unavailable image and keep the currently visible background.
+						}
+					}
+					scheduleRotation();
+				}
+
+				const start = async () => {
+					try {
+						await showBackground(currentIndex, true);
+						schedulePreload();
+					} finally {
+						scheduleRotation();
+					}
+				};
+
+				document.addEventListener('visibilitychange', () => {
+					if (document.hidden) {
+						window.clearTimeout(rotationTimer);
+					} else {
+						schedulePreload();
+						scheduleRotation();
+					}
+				});
+				reducedMotion.addEventListener?.('change', scheduleRotation);
+				void start();
+			})();
+		</script>
 		<ConfigCarrier></ConfigCarrier>
 		<slot />
-		<MusicPlayer client:load />
+		<MusicPlayer client:idle />
 
 		<!-- increase the page height during page transition to prevent the scrolling animation from jumping -->
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
@@ -180,7 +329,7 @@ const bannerOffset =
 	bannerOffset,
 	'banner-height-home': `${BANNER_HEIGHT_HOME}vh`,
 	'banner-height': `${BANNER_HEIGHT}vh`,
-	'site-background-image': `url("${optimizedSiteBackground.src}")`,
+	'background-fade-duration': `${BACKGROUND_FADE_DURATION_MS}ms`,
 }}>
 body {
 	position: relative;
@@ -193,17 +342,45 @@ body {
 	inset: 0;
 	z-index: -1;
 	pointer-events: none;
-	background-image:
-		linear-gradient(rgb(247 246 251 / 0.38), rgb(240 244 252 / 0.44)),
-		var(--site-background-image);
+	overflow: hidden;
+	background: rgb(240 244 252);
+}
+
+.site-background-layer,
+#site-background::after {
+	position: absolute;
+	inset: 0;
+}
+
+.site-background-layer {
+	opacity: 0;
 	background-position: center;
 	background-size: cover;
+	transition: opacity var(--background-fade-duration) ease-in-out;
+	will-change: opacity;
+}
+
+.site-background-layer.is-active {
+	opacity: 1;
+}
+
+#site-background::after {
+	content: "";
+	background: linear-gradient(rgb(247 246 251 / 0.38), rgb(240 244 252 / 0.44));
 }
 
 :root.dark #site-background {
-	background-image:
-		linear-gradient(rgb(18 17 28 / 0.52), rgb(20 24 35 / 0.58)),
-		var(--site-background-image);
+	background: rgb(20 24 35);
+}
+
+:root.dark #site-background::after {
+	background: linear-gradient(rgb(18 17 28 / 0.52), rgb(20 24 35 / 0.58));
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.site-background-layer {
+		transition: none;
+	}
 }
 
 @tailwind components;

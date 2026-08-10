@@ -263,7 +263,7 @@ function finishDragging(event: PointerEvent) {
 	<audio
 		bind:this={audio}
 		src={tracks[currentTrack].src}
-		preload="metadata"
+		preload="none"
 		onplay={() => (isPlaying = true)}
 		onpause={() => (isPlaying = false)}
 		onended={() => selectTrack(currentTrack + 1)}

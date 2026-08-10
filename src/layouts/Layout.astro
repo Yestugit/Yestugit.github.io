@@ -201,12 +201,50 @@ const bannerOffset =
 				const layers = Array.from(container?.querySelectorAll('.site-background-layer') || []);
 				if (!container || layers.length !== 2 || optimizedSiteBackgrounds.length === 0) return;
 
+				const STORAGE_KEY = 'site-background-rotation-v2';
 				const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 				const loadedImages = new Map();
+				const now = Date.now();
+				let restoredFromSession = false;
 				let currentIndex = Math.floor(Math.random() * optimizedSiteBackgrounds.length);
+				let nextSwitchAt = now + BACKGROUND_ROTATION_INTERVAL_MS;
 				let activeLayerIndex = 0;
 				let rotationTimer = 0;
 				let transitionCleanupTimer = 0;
+
+				try {
+					const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || 'null');
+					if (
+						stored &&
+						Number.isInteger(stored.index) &&
+						stored.index >= 0 &&
+						stored.index < optimizedSiteBackgrounds.length &&
+						Number.isFinite(stored.nextSwitchAt)
+					) {
+						currentIndex = stored.index;
+						nextSwitchAt = stored.nextSwitchAt;
+						restoredFromSession = true;
+
+						if (nextSwitchAt <= now) {
+							const elapsedSteps = Math.floor((now - nextSwitchAt) / BACKGROUND_ROTATION_INTERVAL_MS) + 1;
+							currentIndex = (currentIndex + elapsedSteps) % optimizedSiteBackgrounds.length;
+							nextSwitchAt += elapsedSteps * BACKGROUND_ROTATION_INTERVAL_MS;
+						}
+					}
+				} catch {
+					// Ignore unavailable or malformed session storage and start a fresh rotation.
+				}
+
+				const persistRotation = () => {
+					try {
+						sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+							index: currentIndex,
+							nextSwitchAt,
+						}));
+					} catch {
+						// The background rotation still works when storage is unavailable.
+					}
+				};
 
 				const getSource = (index) => {
 					const background = optimizedSiteBackgrounds[index];
@@ -254,7 +292,8 @@ const bannerOffset =
 				const scheduleRotation = () => {
 					window.clearTimeout(rotationTimer);
 					if (document.hidden || reducedMotion.matches) return;
-					rotationTimer = window.setTimeout(rotate, BACKGROUND_ROTATION_INTERVAL_MS);
+					const remainingTime = Math.max(0, nextSwitchAt - Date.now());
+					rotationTimer = window.setTimeout(rotate, remainingTime);
 				};
 
 				const showBackground = async (index, initial = false) => {
@@ -282,20 +321,35 @@ const bannerOffset =
 				};
 
 				async function rotate() {
+					let changed = false;
 					for (let offset = 1; offset < optimizedSiteBackgrounds.length; offset += 1) {
 						const candidateIndex = (currentIndex + offset) % optimizedSiteBackgrounds.length;
 						try {
 							await showBackground(candidateIndex);
-							schedulePreload();
+							changed = true;
 							break;
 						} catch {
 							// Skip an unavailable image and keep the currently visible background.
 						}
 					}
+					nextSwitchAt = Date.now() + BACKGROUND_ROTATION_INTERVAL_MS;
+					persistRotation();
+					if (changed) schedulePreload();
 					scheduleRotation();
 				}
 
 				const start = async () => {
+					persistRotation();
+					if (restoredFromSession) {
+						const src = getSource(currentIndex);
+						layers[activeLayerIndex].style.backgroundImage = `url("${src}")`;
+						layers[activeLayerIndex].classList.add('is-active');
+						void loadBackground(currentIndex).catch(() => undefined);
+						schedulePreload();
+						scheduleRotation();
+						return;
+					}
+
 					try {
 						await showBackground(currentIndex, true);
 						schedulePreload();

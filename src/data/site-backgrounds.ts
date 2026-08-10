@@ -1,9 +1,9 @@
-import currentBackground from "../assets/images/site-background.jpg";
 import background01 from "../assets/images/backgrounds/background-01.jpg";
 import background02 from "../assets/images/backgrounds/background-02.png";
 import background03 from "../assets/images/backgrounds/background-03.jpg";
 import background04 from "../assets/images/backgrounds/background-04.png";
 import background05 from "../assets/images/backgrounds/background-05.png";
+import currentBackground from "../assets/images/site-background.jpg";
 
 export const SITE_BACKGROUNDS = [
 	currentBackground,

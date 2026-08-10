@@ -4,14 +4,6 @@ import ConfigCarrier from "@components/ConfigCarrier.astro";
 import MusicPlayer from "@components/MusicPlayer.svelte";
 import { siteConfig } from "@/config";
 import {
-	BACKGROUND_DESKTOP_MAX_WIDTH,
-	BACKGROUND_FADE_DURATION_MS,
-	BACKGROUND_MOBILE_MAX_WIDTH,
-	BACKGROUND_ROTATION_INTERVAL_MS,
-	BACKGROUND_WEBP_QUALITY,
-	SITE_BACKGROUNDS,
-} from "../data/site-backgrounds";
-import {
 	AUTO_MODE,
 	BANNER_HEIGHT,
 	BANNER_HEIGHT_EXTEND,
@@ -22,6 +14,14 @@ import {
 	PAGE_WIDTH,
 } from "../constants/constants";
 import { defaultFavicons } from "../constants/icon";
+import {
+	BACKGROUND_DESKTOP_MAX_WIDTH,
+	BACKGROUND_FADE_DURATION_MS,
+	BACKGROUND_MOBILE_MAX_WIDTH,
+	BACKGROUND_ROTATION_INTERVAL_MS,
+	BACKGROUND_WEBP_QUALITY,
+	SITE_BACKGROUNDS,
+} from "../data/site-backgrounds";
 import type { Favicon } from "../types/config";
 import { pathsEqual, url } from "../utils/url-utils";
 import "katex/dist/katex.css";

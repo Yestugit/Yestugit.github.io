@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">MCP Host、Client 与 Server 的关系</title>
+  <desc id="desc">Host 内部为每个 MCP Server 建立一个 Client。Server 可以通过标准输入输出运行在本地，也可以通过 HTTP 运行在远程。</desc>
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07152e"/><stop offset="1" stop-color="#1b164d"/></linearGradient>
+    <linearGradient id="host" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#172554"/><stop offset="1" stop-color="#272365"/></linearGradient>
+    <marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#67e8f9"/></marker>
+  </defs>
+  <rect width="1400" height="760" rx="30" fill="url(#bg2)"/>
+  <text x="700" y="60" text-anchor="middle" fill="#f8fafc" font-size="34" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">MCP 是接入外部能力的标准协议，不是所有工具的必经之路</text>
+
+  <rect x="70" y="105" width="560" height="570" rx="30" fill="url(#host)" stroke="#818cf8" stroke-width="3"/>
+  <text x="110" y="156" fill="#c7d2fe" font-size="29" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">MCP Host：Agent 应用 / Harness</text>
+  <rect x="125" y="195" width="210" height="105" rx="22" fill="#101a3d" stroke="#38bdf8" stroke-width="2"/>
+  <text x="230" y="240" text-anchor="middle" fill="#e0f2fe" font-size="25" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">LLM</text>
+  <text x="230" y="273" text-anchor="middle" fill="#7dd3fc" font-size="18" font-family="system-ui,Microsoft YaHei,sans-serif">选择工具与参数</text>
+  <rect x="370" y="195" width="205" height="105" rx="22" fill="#101a3d" stroke="#34d399" stroke-width="2"/>
+  <text x="472" y="240" text-anchor="middle" fill="#d1fae5" font-size="23" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">统一工具注册表</text>
+  <text x="472" y="273" text-anchor="middle" fill="#6ee7b7" font-size="18" font-family="system-ui,Microsoft YaHei,sans-serif">合并可用工具描述</text>
+  <path d="M338 247H365" stroke="#67e8f9" stroke-width="4" marker-end="url(#arr2)"/>
+
+  <rect x="125" y="360" width="205" height="115" rx="22" fill="#252154" stroke="#a78bfa" stroke-width="2"/>
+  <text x="227" y="405" text-anchor="middle" fill="#ede9fe" font-size="24" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">MCP Client A</text>
+  <text x="227" y="440" text-anchor="middle" fill="#c4b5fd" font-size="18" font-family="system-ui,Microsoft YaHei,sans-serif">一条专用连接</text>
+  <rect x="375" y="360" width="205" height="115" rx="22" fill="#252154" stroke="#a78bfa" stroke-width="2"/>
+  <text x="477" y="405" text-anchor="middle" fill="#ede9fe" font-size="24" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">MCP Client B</text>
+  <text x="477" y="440" text-anchor="middle" fill="#c4b5fd" font-size="18" font-family="system-ui,Microsoft YaHei,sans-serif">另一条专用连接</text>
+  <path d="M430 305L227 354M515 305L477 354" stroke="#67e8f9" stroke-width="3" marker-end="url(#arr2)"/>
+  <text x="350" y="535" text-anchor="middle" fill="#94a3b8" font-size="19" font-family="system-ui,Microsoft YaHei,sans-serif">Host 负责上下文、授权、用户确认、安全策略与模型交互</text>
+  <rect x="130" y="570" width="440" height="63" rx="19" fill="#0e1837" stroke="#475569"/>
+  <text x="350" y="610" text-anchor="middle" fill="#cbd5e1" font-size="19" font-family="system-ui,Microsoft YaHei,sans-serif">原生 shell / 文件工具可直接注册，不经过 MCP</text>
+
+  <rect x="770" y="125" width="560" height="235" rx="30" fill="#10233e" stroke="#22d3ee" stroke-width="3"/>
+  <text x="815" y="176" fill="#cffafe" font-size="27" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">本地 MCP Server</text>
+  <text x="815" y="213" fill="#a5f3fc" font-size="19" font-family="system-ui,Microsoft YaHei,sans-serif">独立进程 · 常用 STDIO 传输</text>
+  <rect x="815" y="245" width="205" height="71" rx="18" fill="#164e63"/>
+  <text x="917" y="288" text-anchor="middle" fill="#ecfeff" font-size="21" font-family="system-ui,Microsoft YaHei,sans-serif">文件系统适配器</text>
+  <rect x="1060" y="245" width="220" height="71" rx="18" fill="#164e63"/>
+  <text x="1170" y="288" text-anchor="middle" fill="#ecfeff" font-size="21" font-family="system-ui,Microsoft YaHei,sans-serif">本地数据库 / CLI</text>
+
+  <rect x="770" y="420" width="560" height="235" rx="30" fill="#251c4d" stroke="#a78bfa" stroke-width="3"/>
+  <text x="815" y="471" fill="#ede9fe" font-size="27" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">远程 MCP Server</text>
+  <text x="815" y="508" fill="#c4b5fd" font-size="19" font-family="system-ui,Microsoft YaHei,sans-serif">云端服务 · 常用 Streamable HTTP</text>
+  <rect x="815" y="540" width="205" height="71" rx="18" fill="#403268"/>
+  <text x="917" y="583" text-anchor="middle" fill="#faf5ff" font-size="21" font-family="system-ui,Microsoft YaHei,sans-serif">GitHub / Jira</text>
+  <rect x="1060" y="540" width="220" height="71" rx="18" fill="#403268"/>
+  <text x="1170" y="583" text-anchor="middle" fill="#faf5ff" font-size="21" font-family="system-ui,Microsoft YaHei,sans-serif">SaaS / 企业系统</text>
+
+  <path d="M335 400C530 400 620 245 760 245" fill="none" stroke="#67e8f9" stroke-width="4" marker-end="url(#arr2)"/>
+  <path d="M585 430C670 430 690 530 760 530" fill="none" stroke="#c4b5fd" stroke-width="4" marker-end="url(#arr2)"/>
+  <text x="670" y="212" text-anchor="middle" fill="#67e8f9" font-size="18" font-family="system-ui,Microsoft YaHei,sans-serif">tools/list</text>
+  <text x="680" y="242" text-anchor="middle" fill="#67e8f9" font-size="18" font-family="system-ui,Microsoft YaHei,sans-serif">tools/call</text>
+  <text x="690" y="580" text-anchor="middle" fill="#c4b5fd" font-size="18" font-family="system-ui,Microsoft YaHei,sans-serif">标准协议</text>
+  <text x="700" y="720" text-anchor="middle" fill="#94a3b8" font-size="19" font-family="system-ui,Microsoft YaHei,sans-serif">“Server”描述的是协议角色；它可以就在本机，也可以在互联网或公司内网中。</text>
+</svg>

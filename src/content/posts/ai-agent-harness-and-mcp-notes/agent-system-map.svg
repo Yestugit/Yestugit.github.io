@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="title desc">
+  <title id="title">AI Agent 系统分层图</title>
+  <desc id="desc">用户目标经过应用层进入 Harness，Harness 组织模型、上下文、状态、工具、权限和执行循环，再与环境交互。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#09122d"/><stop offset="1" stop-color="#17205b"/></linearGradient>
+    <linearGradient id="harness" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#262e73"/><stop offset="1" stop-color="#15214f"/></linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0ea5e9"/><stop offset="1" stop-color="#6366f1"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#67e8f9"/></marker>
+  </defs>
+  <rect width="1400" height="820" rx="30" fill="url(#bg)"/>
+  <g opacity=".12" stroke="#93c5fd"><path d="M0 110H1400M0 220H1400M0 330H1400M0 440H1400M0 550H1400M0 660H1400M0 770H1400"/><path d="M120 0V820M300 0V820M480 0V820M660 0V820M840 0V820M1020 0V820M1200 0V820"/></g>
+  <text x="700" y="62" text-anchor="middle" fill="#f8fafc" font-size="34" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">Agent 不是一个模型，而是一套协同运行的系统</text>
+
+  <rect x="545" y="90" width="310" height="72" rx="36" fill="#24366c" stroke="#60a5fa" stroke-width="2"/>
+  <text x="700" y="135" text-anchor="middle" fill="#e0f2fe" font-size="26" font-weight="600" font-family="system-ui,Microsoft YaHei,sans-serif">用户目标 / 当前任务</text>
+  <path d="M700 164V207" stroke="#67e8f9" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect x="105" y="215" width="1190" height="390" rx="34" fill="url(#harness)" stroke="#818cf8" stroke-width="3"/>
+  <text x="145" y="263" fill="#c7d2fe" font-size="29" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">Agent Harness / Runtime</text>
+  <text x="1245" y="262" text-anchor="end" fill="#a5b4fc" font-size="19" font-family="system-ui,Microsoft YaHei,sans-serif">组织、约束并推进每一轮执行</text>
+
+  <rect x="160" y="305" width="290" height="230" rx="24" fill="#111b40" stroke="#38bdf8" stroke-width="2"/>
+  <circle cx="305" cy="380" r="51" fill="url(#cyan)" filter="url(#glow)"/>
+  <path d="M280 380h50M305 355v50" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".9"/>
+  <text x="305" y="469" text-anchor="middle" fill="#f8fafc" font-size="27" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">LLM</text>
+  <text x="305" y="503" text-anchor="middle" fill="#bae6fd" font-size="20" font-family="system-ui,Microsoft YaHei,sans-serif">理解、推理、选择下一步</text>
+
+  <rect x="505" y="305" width="390" height="230" rx="24" fill="#111b40" stroke="#a78bfa" stroke-width="2"/>
+  <text x="700" y="352" text-anchor="middle" fill="#ede9fe" font-size="25" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">运行控制</text>
+  <g font-family="system-ui,Microsoft YaHei,sans-serif" font-size="19" fill="#ddd6fe">
+    <rect x="545" y="378" width="138" height="48" rx="15" fill="#30306c"/><text x="614" y="408" text-anchor="middle">上下文</text>
+    <rect x="717" y="378" width="138" height="48" rx="15" fill="#30306c"/><text x="786" y="408" text-anchor="middle">状态 / 记忆</text>
+    <rect x="545" y="448" width="138" height="48" rx="15" fill="#30306c"/><text x="614" y="478" text-anchor="middle">权限 / 沙箱</text>
+    <rect x="717" y="448" width="138" height="48" rx="15" fill="#30306c"/><text x="786" y="478" text-anchor="middle">循环 / 验证</text>
+  </g>
+
+  <rect x="950" y="305" width="290" height="230" rx="24" fill="#111b40" stroke="#34d399" stroke-width="2"/>
+  <text x="1095" y="352" text-anchor="middle" fill="#d1fae5" font-size="25" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">工具注册表</text>
+  <g font-family="system-ui,Microsoft YaHei,sans-serif" font-size="19" fill="#ecfdf5">
+    <rect x="989" y="378" width="212" height="43" rx="14" fill="#164e63"/><text x="1095" y="406" text-anchor="middle">原生工具</text>
+    <rect x="989" y="435" width="212" height="43" rx="14" fill="#284571"/><text x="1095" y="463" text-anchor="middle">MCP 工具</text>
+    <rect x="989" y="492" width="212" height="43" rx="14" fill="#3b376c"/><text x="1095" y="520" text-anchor="middle">API / SDK 包装</text>
+  </g>
+
+  <path d="M454 420H500M900 420H945" stroke="#67e8f9" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M1095 538V648" stroke="#67e8f9" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M305 538V678H938" fill="none" stroke="#67e8f9" stroke-width="3" stroke-dasharray="10 8" marker-end="url(#arrow)" opacity=".8"/>
+
+  <rect x="125" y="665" width="1150" height="100" rx="26" fill="#0c1838" stroke="#38bdf8" stroke-width="2"/>
+  <text x="180" y="707" fill="#bae6fd" font-size="23" font-weight="700" font-family="system-ui,Microsoft YaHei,sans-serif">环境与真实世界</text>
+  <text x="180" y="742" fill="#94a3b8" font-size="19" font-family="system-ui,Microsoft YaHei,sans-serif">文件系统 · PowerShell / CLI · 浏览器 · 数据库 · GitHub / Jira / SaaS · 远程服务</text>
+  <text x="1220" y="727" text-anchor="end" fill="#67e8f9" font-size="20" font-family="system-ui,Microsoft YaHei,sans-serif">执行结果 → Observation → 下一轮</text>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="880" viewBox="0 0 1200 880" role="img" aria-labelledby="title desc">
+  <title id="title">Loop Engineering 的内外两层循环</title>
+  <desc id="desc">外层目标循环向 Agent Harness 提交任务。Harness 内部执行计划、行动和观察循环，产出候选结果。独立验证器根据证据判断完成、反馈重试或停止并转人工处理。</desc>
+  <defs>
+    <marker id="ae" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#486581"/></marker>
+    <marker id="ag" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#557a65"/></marker>
+    <style>
+      .t{font-family:system-ui,'Microsoft YaHei',sans-serif;fill:#1f2933}.h{font-size:26px;font-weight:700}.m{font-size:19px;font-weight:600}.s{font-size:15px;fill:#52616b}.outer{fill:#f7f9fa;stroke:#486581;stroke-width:2.5}.inner{fill:#fff;stroke:#8797a1;stroke-width:2}.blue{fill:#edf3f7;stroke:#486581;stroke-width:2}.green{fill:#eef5f0;stroke:#557a65;stroke-width:2}.amber{fill:#faf4e8;stroke:#9a7440;stroke-width:2}.line{stroke:#486581;stroke-width:2.5;fill:none;marker-end:url(#ae)}.good{stroke:#557a65;stroke-width:2.5;fill:none;marker-end:url(#ag)}.feedback{stroke:#7b5f75;stroke-width:2.5;fill:none;stroke-dasharray:8 6;marker-end:url(#ae)}
+    </style>
+  </defs>
+  <rect width="1200" height="880" rx="18" fill="#fbfbfa" stroke="#d5dadd"/>
+  <text class="t h" x="600" y="44" text-anchor="middle">Loop Engineering 设计的是外层目标循环，而不只是重复调用模型</text>
+
+  <rect class="outer" x="65" y="73" width="1070" height="745" rx="14"/>
+  <text class="t m" x="92" y="109">外层 Goal Loop（Loop Specification）</text>
+  <text class="t s" x="1108" y="108" text-anchor="end">定义目标、验证、反馈、预算与出口</text>
+
+  <rect class="blue" x="390" y="132" width="420" height="78" rx="9"/>
+  <text class="t m" x="600" y="164" text-anchor="middle">Goal + Done Criteria</text>
+  <text class="t s" x="600" y="190" text-anchor="middle">明确目标，以及什么证据才算完成</text>
+  <path class="line" d="M600 212V252"/>
+
+  <rect class="inner" x="235" y="258" width="730" height="280" rx="12"/>
+  <text class="t m" x="265" y="294">内层 Agent Loop（由 Harness 执行）</text>
+  <text class="t s" x="936" y="293" text-anchor="end">产生本轮候选结果</text>
+  <rect class="blue" x="280" y="344" width="170" height="80" rx="8"/>
+  <text class="t m" x="365" y="378" text-anchor="middle">Plan</text><text class="t s" x="365" y="403" text-anchor="middle">拆分下一步</text>
+  <rect class="blue" x="515" y="344" width="170" height="80" rx="8"/>
+  <text class="t m" x="600" y="378" text-anchor="middle">Act</text><text class="t s" x="600" y="403" text-anchor="middle">调用工具执行</text>
+  <rect class="blue" x="750" y="344" width="170" height="80" rx="8"/>
+  <text class="t m" x="835" y="378" text-anchor="middle">Observe</text><text class="t s" x="835" y="403" text-anchor="middle">读取环境反馈</text>
+  <path class="line" d="M452 384H507"/><path class="line" d="M687 384H742"/>
+  <path class="feedback" d="M835 427V474H365V432"/>
+  <text class="t s" x="600" y="500" text-anchor="middle">根据 Observation 更新 Context，必要时继续内层循环</text>
+
+  <path class="line" d="M600 540V580"/>
+  <rect class="green" x="390" y="586" width="420" height="80" rx="9"/>
+  <text class="t m" x="600" y="618" text-anchor="middle">Independent Verifier</text>
+  <text class="t s" x="600" y="644" text-anchor="middle">运行测试、检查规则与外部证据；不接受模型自报“完成”</text>
+
+  <path class="good" d="M810 626H933"/>
+  <rect class="green" x="940" y="586" width="155" height="80" rx="9"/>
+  <text class="t m" x="1017" y="618" text-anchor="middle">DONE</text>
+  <text class="t s" x="1017" y="644" text-anchor="middle">证据满足条件</text>
+  <text class="t s" x="866" y="612" text-anchor="middle">通过</text>
+
+  <path class="feedback" d="M480 668V710H160V400H225"/>
+  <text class="t s" x="286" y="733" text-anchor="middle">未通过：把失败证据反馈给下一轮</text>
+
+  <path class="line" d="M600 669V736"/>
+  <rect class="amber" x="423" y="742" width="354" height="54" rx="8"/>
+  <text class="t m" x="600" y="775" text-anchor="middle">STOP / HUMAN HANDOFF</text>
+  <text class="t s" x="600" y="839" text-anchor="middle">触发条件：超预算 · 无进展 · 工具持续失败 · 高风险操作 · 需要人类判断</text>
+</svg>

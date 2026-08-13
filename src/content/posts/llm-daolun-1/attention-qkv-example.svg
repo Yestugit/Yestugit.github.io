@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">“北京的天气怎么样”中的 Q、K、V 计算与加权过程</title>
+  <desc id="desc">隐藏状态分别投影为 Query、Key、Value。怎么样的 Query 与各词 Key 匹配，再按权重汇总 Value。</desc>
+  <defs>
+    <style>
+      .title{font:700 28px system-ui,'Microsoft YaHei',sans-serif;fill:#172033}.section{font:700 20px system-ui,'Microsoft YaHei',sans-serif;fill:#21304a}.body{font:16px system-ui,'Microsoft YaHei',sans-serif;fill:#344054}.small{font:14px system-ui,'Microsoft YaHei',sans-serif;fill:#667085}.token{font:700 19px system-ui,'Microsoft YaHei',sans-serif;fill:#172033}.formula{font:17px Georgia,'Times New Roman',serif;fill:#21304a}.weight{font:700 16px system-ui,'Microsoft YaHei',sans-serif;fill:#1f4b7a}.box{fill:#fff;stroke:#98a2b3;stroke-width:1.5}.soft{fill:#f8fafc;stroke:#cbd5e1;stroke-width:1.5}.blue{fill:#eef5fb;stroke:#52789d;stroke-width:1.8}.line{stroke:#667085;stroke-width:1.5;fill:none}.arrow{stroke:#52789d;stroke-width:2;fill:none;marker-end:url(#arrow)}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0l10 5-10 5z" fill="#52789d"/></marker>
+  </defs>
+
+  <rect width="1200" height="820" fill="#fff"/>
+  <rect x="1" y="1" width="1198" height="818" rx="8" fill="none" stroke="#d0d5dd"/>
+  <text x="60" y="58" class="title">“北京的天气怎么样”：Q、K、V 如何协作</text>
+  <line x1="60" y1="76" x2="1140" y2="76" stroke="#21304a" stroke-width="1.5"/>
+
+  <text x="60" y="118" class="section">① 同一个隐藏状态，投影成三种视角</text>
+  <g transform="translate(60 145)">
+    <rect class="box" x="0" y="0" width="170" height="72" rx="6"/><text class="token" x="85" y="31" text-anchor="middle">怎么样</text><text class="small" x="85" y="55" text-anchor="middle">隐藏状态 h₄</text>
+    <path class="arrow" d="M170 36H224"/>
+    <rect class="blue" x="225" y="0" width="190" height="72" rx="6"/><text class="formula" x="320" y="32" text-anchor="middle">q₄ = h₄W<tspan baseline-shift="sub" font-size="12">Q</tspan></text><text class="small" x="320" y="56" text-anchor="middle">我在找什么</text>
+    <rect class="soft" x="455" y="0" width="190" height="72" rx="6"/><text class="formula" x="550" y="32" text-anchor="middle">k₄ = h₄W<tspan baseline-shift="sub" font-size="12">K</tspan></text><text class="small" x="550" y="56" text-anchor="middle">如何被匹配</text>
+    <rect class="soft" x="685" y="0" width="190" height="72" rx="6"/><text class="formula" x="780" y="32" text-anchor="middle">v₄ = h₄W<tspan baseline-shift="sub" font-size="12">V</tspan></text><text class="small" x="780" y="56" text-anchor="middle">能提供什么</text>
+    <text class="body" x="915" y="27">每个 token 都会用同样方式</text><text class="body" x="915" y="53">生成自己的 q、k、v</text>
+  </g>
+
+  <text x="60" y="270" class="section">② “怎么样”的 Query 与所有可见 Key 匹配</text>
+  <g transform="translate(60 295)">
+    <rect class="blue" x="0" y="32" width="165" height="74" rx="6"/><text class="token" x="82" y="63" text-anchor="middle">怎么样 · q₄</text><text class="small" x="82" y="88" text-anchor="middle">当前查询</text>
+    <path class="arrow" d="M165 69H230"/>
+    <text class="small" x="265" y="17" text-anchor="middle">点积并缩放</text>
+    <g transform="translate(230 32)">
+      <rect class="box" x="0" y="0" width="170" height="74" rx="6"/><text class="token" x="85" y="30" text-anchor="middle">北京 · k₁</text><text class="weight" x="85" y="57" text-anchor="middle">权重 0.35</text>
+      <rect class="box" x="190" y="0" width="170" height="74" rx="6"/><text class="token" x="275" y="30" text-anchor="middle">的 · k₂</text><text class="weight" x="275" y="57" text-anchor="middle">权重 0.05</text>
+      <rect class="blue" x="380" y="0" width="170" height="74" rx="6"/><text class="token" x="465" y="30" text-anchor="middle">天气 · k₃</text><text class="weight" x="465" y="57" text-anchor="middle">权重 0.55</text>
+      <rect class="box" x="570" y="0" width="170" height="74" rx="6"/><text class="token" x="655" y="30" text-anchor="middle">怎么样 · k₄</text><text class="weight" x="655" y="57" text-anchor="middle">权重 0.05</text>
+    </g>
+    <text class="small" x="600" y="137" text-anchor="middle">q₄ 与 k₁…k₄ 的分数经过 Softmax 后，总和为 1</text>
+  </g>
+
+  <text x="60" y="490" class="section">③ 权重作用在 Value 上，合成当前上下文表示</text>
+  <g transform="translate(60 515)">
+    <text class="body" x="0" y="26">北京 · v₁</text><rect x="105" y="7" width="231" height="24" rx="3" fill="#8aa8c4"/><text class="weight" x="348" y="25">0.35</text>
+    <text class="body" x="0" y="76">的 · v₂</text><rect x="105" y="57" width="33" height="24" rx="3" fill="#cbd5e1"/><text class="weight" x="150" y="75">0.05</text>
+    <text class="body" x="0" y="126">天气 · v₃</text><rect x="105" y="107" width="363" height="24" rx="3" fill="#52789d"/><text class="weight" x="480" y="125">0.55</text>
+    <text class="body" x="0" y="176">怎么样 · v₄</text><rect x="105" y="157" width="33" height="24" rx="3" fill="#cbd5e1"/><text class="weight" x="150" y="175">0.05</text>
+    <path class="arrow" d="M525 94H625"/>
+    <rect class="blue" x="630" y="37" width="470" height="116" rx="7"/>
+    <text class="formula" x="865" y="75" text-anchor="middle">z₄ = 0.35v₁ + 0.05v₂ + 0.55v₃ + 0.05v₄</text>
+    <text class="body" x="865" y="108" text-anchor="middle">“怎么样”的新表示重点融合“天气”，同时保留“北京”的语境</text>
+    <text class="small" x="865" y="136" text-anchor="middle">匹配看 Q/K，取内容看 V</text>
+  </g>
+
+  <line x1="60" y1="744" x2="1140" y2="744" stroke="#d0d5dd"/>
+  <text x="60" y="779" class="small">说明：token 切分与注意力权重均为教学示意；真实数值由模型、层、注意力头与上下文共同决定。</text>
+</svg>

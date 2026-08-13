@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="680" viewBox="0 0 1000 680" role="img" aria-labelledby="title desc">
+  <title id="title">因果掩码下的注意力矩阵</title>
+  <desc id="desc">查询位于行，键位于列。每个位置只可关注自己和前文，未来位置被掩码。</desc>
+  <defs>
+    <style>
+      .title{font:700 27px system-ui,'Microsoft YaHei',sans-serif;fill:#172033}.section{font:700 19px system-ui,'Microsoft YaHei',sans-serif;fill:#21304a}.body{font:16px system-ui,'Microsoft YaHei',sans-serif;fill:#344054}.small{font:14px system-ui,'Microsoft YaHei',sans-serif;fill:#667085}.num{font:16px system-ui,'Microsoft YaHei',sans-serif;fill:#172033}.white{font:16px system-ui,'Microsoft YaHei',sans-serif;fill:#fff}.masked{font:15px system-ui,'Microsoft YaHei',sans-serif;fill:#98a2b3}
+    </style>
+  </defs>
+  <rect width="1000" height="680" fill="#fff"/>
+  <rect x="1" y="1" width="998" height="678" rx="8" fill="none" stroke="#d0d5dd"/>
+  <text x="55" y="55" class="title">因果注意力：每个位置只能看到自己和前文</text>
+  <line x1="55" y1="74" x2="945" y2="74" stroke="#21304a" stroke-width="1.5"/>
+
+  <text x="465" y="115" class="section" text-anchor="middle">Key（被查询的位置）→</text>
+  <g class="body" text-anchor="middle">
+    <text x="330" y="154">北京</text><text x="450" y="154">的</text><text x="570" y="154">天气</text><text x="690" y="154">怎么样</text>
+  </g>
+  <text x="120" y="335" class="section" transform="rotate(-90 120 335)" text-anchor="middle">Query（发出查询的位置）→</text>
+  <g class="body" text-anchor="end">
+    <text x="250" y="211">北京</text><text x="250" y="301">的</text><text x="250" y="391">天气</text><text x="250" y="481">怎么样</text>
+  </g>
+
+  <g stroke="#fff" stroke-width="3">
+    <rect x="270" y="170" width="120" height="90" fill="#52789d"/><rect x="390" y="170" width="120" height="90" fill="#f2f4f7"/><rect x="510" y="170" width="120" height="90" fill="#f2f4f7"/><rect x="630" y="170" width="120" height="90" fill="#f2f4f7"/>
+    <rect x="270" y="260" width="120" height="90" fill="#a9bdcf"/><rect x="390" y="260" width="120" height="90" fill="#6f93b3"/><rect x="510" y="260" width="120" height="90" fill="#f2f4f7"/><rect x="630" y="260" width="120" height="90" fill="#f2f4f7"/>
+    <rect x="270" y="350" width="120" height="90" fill="#c3d0dc"/><rect x="390" y="350" width="120" height="90" fill="#dbe3ea"/><rect x="510" y="350" width="120" height="90" fill="#6f93b3"/><rect x="630" y="350" width="120" height="90" fill="#f2f4f7"/>
+    <rect x="270" y="440" width="120" height="90" fill="#9db4c9"/><rect x="390" y="440" width="120" height="90" fill="#dbe3ea"/><rect x="510" y="440" width="120" height="90" fill="#52789d"/><rect x="630" y="440" width="120" height="90" fill="#dbe3ea"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="330" y="222" class="white">1.00</text><text x="450" y="222" class="masked">未来</text><text x="570" y="222" class="masked">未来</text><text x="690" y="222" class="masked">未来</text>
+    <text x="330" y="312" class="num">0.30</text><text x="450" y="312" class="white">0.70</text><text x="570" y="312" class="masked">未来</text><text x="690" y="312" class="masked">未来</text>
+    <text x="330" y="402" class="num">0.20</text><text x="450" y="402" class="num">0.10</text><text x="570" y="402" class="white">0.70</text><text x="690" y="402" class="masked">未来</text>
+    <text x="330" y="492" class="num">0.35</text><text x="450" y="492" class="num">0.05</text><text x="570" y="492" class="white">0.55</text><text x="690" y="492" class="num">0.05</text>
+  </g>
+
+  <g transform="translate(800 190)">
+    <rect x="0" y="0" width="28" height="28" fill="#52789d"/><text x="40" y="20" class="small">权重较高</text>
+    <rect x="0" y="50" width="28" height="28" fill="#dbe3ea"/><text x="40" y="70" class="small">权重较低</text>
+    <rect x="0" y="100" width="28" height="28" fill="#f2f4f7" stroke="#d0d5dd"/><text x="40" y="120" class="small">未来位置</text>
+  </g>
+
+  <path d="M270 555H750" stroke="#d0d5dd"/>
+  <text x="270" y="588" class="body">上三角：在 Softmax 前加 −∞，归一化后权重为 0</text>
+  <text x="270" y="621" class="body">下三角（含对角线）：当前位置可以关注前文，也可以关注自己</text>
+  <text x="55" y="655" class="small">矩阵中的权重为教学示意。颜色越深，表示该 Query 对相应 Key 的注意力越集中。</text>
+</svg>

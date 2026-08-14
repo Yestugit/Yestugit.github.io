@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Agent Loop 中 Harness、Model、Runtime 与 Environment 的协作</title>
+  <desc id="desc">Harness 构建上下文，模型做出决策，Harness 约束决策，Runtime 执行工具，环境返回观察，Harness 验证后继续或停止。</desc>
+  <defs>
+    <style>
+      .title{font:700 28px system-ui,'Microsoft YaHei',sans-serif;fill:#172033}.lane{font:700 20px system-ui,'Microsoft YaHei',sans-serif;fill:#21304a}.body{font:16px system-ui,'Microsoft YaHei',sans-serif;fill:#344054}.small{font:14px system-ui,'Microsoft YaHei',sans-serif;fill:#667085}.step{font:700 15px system-ui,'Microsoft YaHei',sans-serif;fill:#1f4b7a}.head{fill:#eef5fb;stroke:#52789d;stroke-width:1.5}.life{stroke:#98a2b3;stroke-width:1.2;stroke-dasharray:6 5}.arrow{stroke:#52789d;stroke-width:2;fill:none;marker-end:url(#arrow)}.return{stroke:#667085;stroke-width:1.8;fill:none;marker-end:url(#gray)}.note{fill:#f8fafc;stroke:#cbd5e1;stroke-width:1.2}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0l10 5-10 5z" fill="#52789d"/></marker>
+    <marker id="gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0l10 5-10 5z" fill="#667085"/></marker>
+  </defs>
+  <rect width="1200" height="760" fill="#fff"/>
+  <text x="55" y="58" class="title">一次 Agent Loop：控制逻辑与执行基础怎样协作</text>
+  <line x1="55" y1="78" x2="1145" y2="78" stroke="#21304a" stroke-width="1.5"/>
+
+  <g>
+    <rect class="head" x="90" y="110" width="210" height="62" rx="7"/><text x="195" y="148" class="lane" text-anchor="middle">Harness</text>
+    <rect class="head" x="355" y="110" width="210" height="62" rx="7"/><text x="460" y="148" class="lane" text-anchor="middle">Model</text>
+    <rect class="head" x="620" y="110" width="210" height="62" rx="7"/><text x="725" y="148" class="lane" text-anchor="middle">Runtime</text>
+    <rect class="head" x="885" y="110" width="210" height="62" rx="7"/><text x="990" y="148" class="lane" text-anchor="middle">Environment</text>
+    <line class="life" x1="195" y1="172" x2="195" y2="675"/><line class="life" x1="460" y1="172" x2="460" y2="675"/><line class="life" x1="725" y1="172" x2="725" y2="675"/><line class="life" x1="990" y1="172" x2="990" y2="675"/>
+  </g>
+
+  <text x="65" y="215" class="step">1</text><path class="arrow" d="M195 210H460"/><text x="327" y="200" class="body" text-anchor="middle">构建 Context，调用模型</text>
+  <text x="330" y="274" class="step">2</text><path class="return" d="M460 270H195"/><text x="327" y="260" class="body" text-anchor="middle">Decision / Tool Call</text>
+
+  <rect class="note" x="90" y="298" width="210" height="75" rx="6"/>
+  <text x="195" y="326" class="body" text-anchor="middle">约束与参数校验</text>
+  <text x="195" y="352" class="small" text-anchor="middle">允许 / 拒绝 / 请求确认</text>
+
+  <text x="590" y="415" class="step">3</text><path class="arrow" d="M195 410H725"/><text x="460" y="400" class="body" text-anchor="middle">执行被允许的行动</text>
+  <text x="855" y="476" class="step">4</text><path class="arrow" d="M725 470H990"/><text x="857" y="460" class="body" text-anchor="middle">调用 Shell / API / 文件工具</text>
+  <text x="855" y="537" class="step">5</text><path class="return" d="M990 530H725"/><text x="857" y="520" class="body" text-anchor="middle">Observation / Error / Evidence</text>
+  <text x="590" y="598" class="step">6</text><path class="return" d="M725 590H195"/><text x="460" y="580" class="body" text-anchor="middle">更新 State 与 Agent Status</text>
+
+  <rect class="note" x="90" y="615" width="210" height="72" rx="6"/>
+  <text x="195" y="643" class="body" text-anchor="middle">验证结果与终止条件</text>
+  <text x="195" y="669" class="small" text-anchor="middle">继续 · 纠正 · 停止</text>
+  <path class="arrow" d="M90 651H55V210H195"/>
+
+  <text x="355" y="717" class="small">Agent Loop 描述流程；Runtime 提供每一步的可执行原语；Harness 负责组织、约束、验证和决定是否进入下一轮。</text>
+</svg>

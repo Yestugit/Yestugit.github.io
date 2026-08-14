@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">KV Cache 与 Prompt Cache 的作用范围</title>
+  <desc id="desc">KV Cache 在单次请求的逐 token 解码中复用历史 K、V；Prompt Cache 在不同请求之间复用相同的稳定 Prompt 前缀。</desc>
+  <defs>
+    <style>
+      .title{font:700 28px system-ui,'Microsoft YaHei',sans-serif;fill:#172033}.heading{font:700 21px system-ui,'Microsoft YaHei',sans-serif;fill:#21304a}.body{font:16px system-ui,'Microsoft YaHei',sans-serif;fill:#344054}.small{font:14px system-ui,'Microsoft YaHei',sans-serif;fill:#667085}.token{font:700 16px system-ui,'Microsoft YaHei',sans-serif;fill:#172033}.blueText{font:700 15px system-ui,'Microsoft YaHei',sans-serif;fill:#1f4b7a}.box{fill:#fff;stroke:#98a2b3;stroke-width:1.5}.stable{fill:#eef5fb;stroke:#52789d;stroke-width:1.6}.new{fill:#f5f7fa;stroke:#98a2b3;stroke-width:1.5}.cache{fill:#e2edf6;stroke:#52789d;stroke-width:1.7}.arrow{stroke:#52789d;stroke-width:2;fill:none;marker-end:url(#arrow)}.line{stroke:#98a2b3;stroke-width:1.5;fill:none}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0l10 5-10 5z" fill="#52789d"/></marker>
+  </defs>
+  <rect width="1200" height="820" fill="#fff"/>
+  <text x="55" y="58" class="title">两层缓存：请求内部复用历史，请求之间复用前缀</text>
+  <line x1="55" y1="78" x2="1145" y2="78" stroke="#21304a" stroke-width="1.5"/>
+
+  <text x="55" y="120" class="heading">① KV Cache：同一次请求中的 Decode</text>
+  <text x="55" y="150" class="small">已有 token 的 K、V 保存在各层缓存中；新 token 只计算自己的 Q、K、V，但 Attention 仍要读取全部历史 K、V。</text>
+  <g transform="translate(70 185)">
+    <rect class="box" x="0" y="0" width="120" height="65" rx="6"/><text x="60" y="29" class="token" text-anchor="middle">我</text><text x="60" y="51" class="small" text-anchor="middle">K₁ · V₁</text>
+    <rect class="box" x="140" y="0" width="120" height="65" rx="6"/><text x="200" y="29" class="token" text-anchor="middle">喜欢</text><text x="200" y="51" class="small" text-anchor="middle">K₂ · V₂</text>
+    <rect class="box" x="280" y="0" width="120" height="65" rx="6"/><text x="340" y="29" class="token" text-anchor="middle">吃</text><text x="340" y="51" class="small" text-anchor="middle">K₃ · V₃</text>
+    <rect class="stable" x="440" y="0" width="145" height="65" rx="6"/><text x="512" y="29" class="token" text-anchor="middle">苹果</text><text x="512" y="51" class="small" text-anchor="middle">新算 Q₄·K₄·V₄</text>
+    <path class="arrow" d="M585 32H665"/>
+    <rect class="cache" x="670" y="0" width="365" height="65" rx="6"/>
+    <text x="852" y="27" class="body" text-anchor="middle">Q₄ × [K₁ K₂ K₃ K₄]</text>
+    <text x="852" y="50" class="small" text-anchor="middle">按权重汇总 [V₁ V₂ V₃ V₄]</text>
+    <path class="line" d="M0 95H585"/>
+    <text x="292" y="122" class="blueText" text-anchor="middle">历史 K、V 已缓存，不再重算</text>
+    <text x="852" y="104" class="small" text-anchor="middle">得到 h(苹果)，用于预测再下一个 token</text>
+  </g>
+
+  <line x1="55" y1="365" x2="1145" y2="365" stroke="#d0d5dd"/>
+  <text x="55" y="410" class="heading">② Prompt Cache：不同请求之间的 Prefill</text>
+  <text x="55" y="440" class="small">多个请求拥有字节级一致的稳定前缀时，服务端可复用此前 Prefill 产生的计算状态，只处理新追加的后缀。</text>
+
+  <g transform="translate(70 480)">
+    <text x="0" y="25" class="blueText">第一次请求</text>
+    <rect class="stable" x="120" y="0" width="190" height="60" rx="6"/><text x="215" y="25" class="token" text-anchor="middle">System Prompt</text><text x="215" y="47" class="small" text-anchor="middle">稳定前缀</text>
+    <rect class="stable" x="320" y="0" width="180" height="60" rx="6"/><text x="410" y="25" class="token" text-anchor="middle">Tool Definitions</text><text x="410" y="47" class="small" text-anchor="middle">稳定前缀</text>
+    <rect class="new" x="510" y="0" width="180" height="60" rx="6"/><text x="600" y="36" class="token" text-anchor="middle">用户问题 A</text>
+    <path class="arrow" d="M690 30H760"/>
+    <rect class="cache" x="765" y="0" width="275" height="60" rx="6"/><text x="902" y="26" class="body" text-anchor="middle">Prefill 并保存前缀状态</text><text x="902" y="48" class="small" text-anchor="middle">首次计算</text>
+
+    <text x="0" y="140" class="blueText">第二次请求</text>
+    <rect class="stable" x="120" y="115" width="190" height="60" rx="6"/><text x="215" y="140" class="token" text-anchor="middle">System Prompt</text><text x="215" y="162" class="small" text-anchor="middle">命中缓存</text>
+    <rect class="stable" x="320" y="115" width="180" height="60" rx="6"/><text x="410" y="140" class="token" text-anchor="middle">Tool Definitions</text><text x="410" y="162" class="small" text-anchor="middle">命中缓存</text>
+    <rect class="new" x="510" y="115" width="180" height="60" rx="6"/><text x="600" y="151" class="token" text-anchor="middle">用户问题 B</text>
+    <path class="arrow" d="M690 145H760"/>
+    <rect class="cache" x="765" y="115" width="275" height="60" rx="6"/><text x="902" y="141" class="body" text-anchor="middle">读取缓存 + 计算新后缀</text><text x="902" y="163" class="small" text-anchor="middle">避免重读稳定前缀</text>
+
+    <path class="line" d="M120 205H500"/>
+    <text x="310" y="233" class="small" text-anchor="middle">稳定前缀应固定顺序、尽量不改</text>
+    <path class="line" d="M510 205H690"/>
+    <text x="600" y="233" class="small" text-anchor="middle">动态内容追加在末尾</text>
+  </g>
+
+  <line x1="55" y1="755" x2="1145" y2="755" stroke="#d0d5dd"/>
+  <text x="55" y="787" class="small">共同原理：复用不变前缀。差别：KV Cache 主要服务当前请求的逐 token 生成；Prompt Cache 把前缀复用扩展到不同请求。</text>
+</svg>
